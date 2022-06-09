@@ -1,0 +1,276 @@
+Microsoft Windows [Version 10.0.22000.675]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASUS>mysql -u root -p
+Enter password: **********
+Welcome to the MySQL monitor.  Commands end with ; or \g.
+Your MySQL connection id is 16
+Server version: 8.0.29 MySQL Community Server - GPL
+
+Copyright (c) 2000, 2022, Oracle and/or its affiliates.
+
+Oracle is a registered trademark of Oracle Corporation and/or its
+affiliates. Other names may be trademarks of their respective
+owners.
+
+Type 'help;' or '\h' for help. Type '\c' to clear the current input statement.
+
+mysql> show databases;
++----------------------------+
+| Database                   |
++----------------------------+
+| amezonweb                  |
+| e_commerce_project         |
+| ecommerce_project          |
+| ecommerceweb               |
+| information_schema         |
+| itworld                    |
+| login_user                 |
+| mysql                      |
+| omkardb1                   |
+| performance_schema         |
+| practice                   |
+| practice01                 |
+| project_ecommerce_business |
+| sys                        |
++----------------------------+
+14 rows in set (0.10 sec)
+
+mysql> use project_ecommerce_business;
+Database changed
+mysql> show tables;
++--------------------------------------+
+| Tables_in_project_ecommerce_business |
++--------------------------------------+
+| con                                  |
+| consumer                             |
+| new                                  |
+| product                              |
+| shipment                             |
+| storage                              |
+| supplier                             |
+| warehouse                            |
++--------------------------------------+
+8 rows in set (0.02 sec)
+
+mysql> use consumer;
+ERROR 1049 (42000): Unknown database 'consumer'
+mysql> desc consumer;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| customer_no | varchar(11)   | NO   | PRI | NULL    |       |
+| fname       | varchar(7)    | YES  |     | NULL    |       |
+| lname       | varchar(9)    | YES  |     | NULL    |       |
+| contactNo   | varchar(11)   | YES  |     | NULL    |       |
+| email       | varchar(11)   | YES  |     | NULL    |       |
+| gender      | enum('M','F') | YES  |     | NULL    |       |
+| Shp_Loc     | varchar(20)   | YES  |     | NULL    |       |
+| pid         | varchar(10)   | YES  | MUL | NULL    |       |
+| tracker_id  | varchar(20)   | YES  | MUL | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+9 rows in set (0.05 sec)
+
+mysql> desc warehouse;
++---------------+-------------+------+-----+---------+-------+
+| Field         | Type        | Null | Key | Default | Extra |
++---------------+-------------+------+-----+---------+-------+
+| gid           | varchar(10) | NO   | PRI | NULL    |       |
+| rackid        | varchar(15) | YES  |     | NULL    |       |
+| itemname      | varchar(20) | YES  |     | NULL    |       |
+| type          | varchar(15) | YES  |     | NULL    |       |
+| quantity      | int         | YES  |     | NULL    |       |
+| pincode       | int         | YES  |     | NULL    |       |
+| city          | varchar(15) | YES  |     | NULL    |       |
+| contractor_id | varchar(15) | YES  |     | NULL    |       |
+| contact_no    | varchar(15) | YES  |     | NULL    |       |
+| email         | varchar(20) | YES  |     | NULL    |       |
++---------------+-------------+------+-----+---------+-------+
+10 rows in set (0.00 sec)
+
+mysql> desc shipment;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| ship_no      | int         | YES  |     | NULL    |       |
+| DateofSupply | varchar(30) | YES  |     | NULL    |       |
+| tracker_id   | varchar(20) | NO   | PRI | NULL    |       |
+| Address      | varchar(30) | YES  |     | NULL    |       |
+| date         | varchar(20) | YES  |     | NULL    |       |
+| status       | varchar(20) | YES  |     | NULL    |       |
+| dealer_fname | varchar(30) | YES  |     | NULL    |       |
+| dealer_lname | varchar(30) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> desc consumer;
++-------------+---------------+------+-----+---------+-------+
+| Field       | Type          | Null | Key | Default | Extra |
++-------------+---------------+------+-----+---------+-------+
+| customer_no | varchar(11)   | NO   | PRI | NULL    |       |
+| fname       | varchar(7)    | YES  |     | NULL    |       |
+| lname       | varchar(9)    | YES  |     | NULL    |       |
+| contactNo   | varchar(11)   | YES  |     | NULL    |       |
+| email       | varchar(11)   | YES  |     | NULL    |       |
+| gender      | enum('M','F') | YES  |     | NULL    |       |
+| Shp_Loc     | varchar(20)   | YES  |     | NULL    |       |
+| pid         | varchar(10)   | YES  | MUL | NULL    |       |
+| tracker_id  | varchar(20)   | YES  | MUL | NULL    |       |
++-------------+---------------+------+-----+---------+-------+
+9 rows in set (0.00 sec)
+
+mysql> desc supplier;
++-------------+-------------+------+-----+---------+-------+
+| Field       | Type        | Null | Key | Default | Extra |
++-------------+-------------+------+-----+---------+-------+
+| sid         | varchar(10) | NO   | PRI | NULL    |       |
+| contact     | varchar(10) | YES  |     | NULL    |       |
+| email       | varchar(15) | YES  |     | NULL    |       |
+| itemName    | varchar(20) | YES  |     | NULL    |       |
+| gid         | varchar(10) | YES  | MUL | NULL    |       |
+| nationality | varchar(20) | YES  |     | NULL    |       |
+| sto_id      | varchar(10) | YES  | MUL | NULL    |       |
++-------------+-------------+------+-----+---------+-------+
+7 rows in set (0.00 sec)
+
+mysql> desc product;
++------------------+-------------+------+-----+---------+-------+
+| Field            | Type        | Null | Key | Default | Extra |
++------------------+-------------+------+-----+---------+-------+
+| pid              | varchar(10) | NO   | PRI | NULL    |       |
+| barcode          | varchar(15) | YES  |     | NULL    |       |
+| proname          | varchar(10) | YES  |     | NULL    |       |
+| description      | varchar(20) | YES  |     | NULL    |       |
+| invoiceNo        | varchar(20) | YES  |     | NULL    |       |
+| serial_no        | int         | YES  |     | NULL    |       |
+| manufacture_date | varchar(15) | YES  |     | NULL    |       |
+| sid              | varchar(10) | YES  | MUL | NULL    |       |
++------------------+-------------+------+-----+---------+-------+
+8 rows in set (0.00 sec)
+
+mysql> desc storage;
++--------------+-------------+------+-----+---------+-------+
+| Field        | Type        | Null | Key | Default | Extra |
++--------------+-------------+------+-----+---------+-------+
+| sto_id       | varchar(10) | NO   | PRI | NULL    |       |
+| section      | varchar(10) | YES  |     | NULL    |       |
+| capacity     | varchar(20) | YES  |     | 1000    |       |
+| items        | int         | YES  |     | NULL    |       |
+| state        | varchar(30) | YES  |     | NULL    |       |
+| Manager_Name | varchar(30) | YES  |     | NULL    |       |
++--------------+-------------+------+-----+---------+-------+
+6 rows in set (0.00 sec)
+
+mysql> select * from warehouse;
++------+--------+------------+-------------+----------+---------+-----------------+---------------+------------+----------------------+
+| gid  | rackid | itemname   | type        | quantity | pincode | city            | contractor_id | contact_no | email                |
++------+--------+------------+-------------+----------+---------+-----------------+---------------+------------+----------------------+
+| A01  | Rk001  | Laptops    | electronics |       70 |  452006 | Bhopal          | co_2401       | 9880084565 | simomalvia@yahoo.com |
+| A02  | Rk002  | Mobile     | electronics |       80 |  110092 | Indore          | co_2402       | 8855226365 | jkpetrol@gmail.com   |
+| A03  | Rk00   | Mobile     | electronics |       90 |  829205 | Mumbai          | co_2403       | 7721947032 | jaiswal@yahoo.com    |
+| A04  | Rk003  | Keybord    | scientific  |      100 |  825408 | Chennai         | co_2404       | 7218705465 | warikoo@yahoo.com    |
+| A05  | Rk004  | Watches    | groceries   |      110 |  670571 | Nashik          | co_2405       | 9432154578 | navalgund@yahoo.com  |
+| A06  | Rk005  | Camera     | sporting    |      120 |  795102 | Pune            | co_2406       | 8778554213 | vpatil@yahoo.com     |
+| A07  | Rk006  | Calculator | scientific  |      130 |  744101 | Jaipur          | co_2407       | 9623564578 | survey@yahoo.com     |
+| W001 | 6901   | laptop     | electronics |       25 |  507130 | Aurangabad      | co_2408       | 8866554421 | varmaamz@yahoo.com   |
+| W002 | 7901   | camera     | expensive   |       20 |  790001 | Maisure         | co_2409       | 8612234585 | dinkutwar@yahoo.com  |
+| W003 | 8901   | mobile     | electronics |       30 |  781001 | Ooty            | co_2409       | 8212457896 | pant@yahoo.com       |
+| W004 | 9901   | headphone  | electronics |       28 |  800001 | Vishakhapatanam | co_2410       | 8423124565 | sharma@yahoo.com     |
+| W005 | 9902   | Calculator | scientific  |      130 |  140119 | Banglore        | co_2411       | 9763524112 | reddy@yahoo.com      |
++------+--------+------------+-------------+----------+---------+-----------------+---------------+------------+----------------------+
+12 rows in set (0.00 sec)
+
+mysql> select * from shipement;
+ERROR 1146 (42S02): Table 'project_ecommerce_business.shipement' doesn't exist
+mysql> select * from shipment;
++---------+--------------------+------------+---------------------+------------+---------------------+--------------+--------------+
+| ship_no | DateofSupply       | tracker_id | Address             | date       | status              | dealer_fname | dealer_lname |
++---------+--------------------+------------+---------------------+------------+---------------------+--------------+--------------+
+|       1 | delivered          | bhopal     | arera hills         | 2022-06-27 | package departed    | Rubina       | Thakur       |
+|       2 | out_for_delivery   | delhi      | vidyut_nagar        | 2022-06-25 | package transferred | nikki        | Chand        |
+|       3 | delivered          | kolkata    | Gariahat Market     | 2022-06-26 | package arrived     | Lalit        | Kumar        |
+|       5 | you place in order | mumbai     | airoli navi mumbai  | 2022-05-04 | track your package  | Mahender     | Devi         |
+|       4 | out_for_delivery   | noida      | Noida Sector 45 S.O | 2022-06-24 | package_departed    | ashok        | kale         |
+|       6 | shipment preapared | vadodara   | orient buss centre  | 2022-05-05 | package departed    | mohit        | jaiswal      |
++---------+--------------------+------------+---------------------+------------+---------------------+--------------+--------------+
+6 rows in set (0.00 sec)
+
+mysql> select * from consumer;
++-------------+--------+---------+-------------+-------------+--------+-----------+------------+------------+
+| customer_no | fname  | lname   | contactNo   | email       | gender | Shp_Loc   | pid        | tracker_id |
++-------------+--------+---------+-------------+-------------+--------+-----------+------------+------------+
+| C00091      | Ankur  | Warikoo | 9834171641  | o@gmail.com | M      | New Delhi | pro-x00024 | bhopal     |
+| C00092      | Ashish | Dalal   | 8855994566  | a@gmail.com | M      | New Delhi | pro-x00025 | delhi      |
+| C00093      | aniket | jain    | 8855665544  | s@gmail.com | M      | Jamner    | pro-x00026 | kolkata    |
+| C00094      | Uday   | Patil   | 8975665544  | U@gmail.com | M      | Satara    | pro-x00027 | mumbai     |
+| C00095      | nikhil | patil   | 9999665544  | N@gmail.com | M      | Kolhapur  | pro-x00028 | noida      |
+| C00096      | Anuj   | Singh   | 9999662212  | g@gmail.com | M      | Jaipur    | pro-x00029 | NULL       |
+| C00097      | Shiva  | Shriva  | 91969662212 | r@gmail.com | M      | Patana    | pro-x00030 | vadodara   |
++-------------+--------+---------+-------------+-------------+--------+-----------+------------+------------+
+7 rows in set (0.00 sec)
+
+mysql> select * from supplier;
++---------+------------+-------------+-----------+------+-------------+--------+
+| sid     | contact    | email       | itemName  | gid  | nationality | sto_id |
++---------+------------+-------------+-----------+------+-------------+--------+
+| S000701 | 9834171641 | x@gmail.com | Laptop    | A01  | Indian      | S1_A01 |
+| S000702 | 9834172123 | y@gmail.com | Camera    | A02  | Russian     | S1_A03 |
+| S000703 | 8877172123 | z@gmail.com | Mobile    | A03  | Chinese     | S2_A02 |
+| S000704 | 9145172123 | l@gmail.com | Keybord   | A04  | British     | S2_A03 |
+| S000705 | 8855172123 | a@gmail.com | Watches   | A05  | American    | S3_A04 |
+| S000706 | 9166172123 | b@gmail.com | Headphone | A06  | Italian     | S3_A05 |
+| S000707 | 8732172123 | c@gmail.com | i12 TWS B | A07  | Japanese    | S4_A01 |
+| S000708 | 9266172123 | d@gmail.com | Proffisy  | W001 | Belizean    | S4_A02 |
+| S000709 | 9373172123 | e@gmail.com | LED       | W002 | American    | S4_A03 |
+| S000710 | 9623172255 | f@gmail.com | Speaker   | W003 | Indian      | S5_A0  |
++---------+------------+-------------+-----------+------+-------------+--------+
+10 rows in set (0.00 sec)
+
+mysql> select * from storage;
++--------+---------+------------+-------+------------------------------+-------------------------+
+| sto_id | section | capacity   | items | state                        | Manager_Name            |
++--------+---------+------------+-------+------------------------------+-------------------------+
+| S1_A01 | sec-A   | 200 sq ft  |    50 | Andhra Pradesh (Hyderabad)   | Y. S. Jagan Mohan Reddy |
+| S1_A03 | sec-A   | 250 sq ft  |    80 | Arunachal Pradesh (Itanagar) | Pema Khandu             |
+| S2_A02 | sec-B   | 260 sq ft  |    60 | Assam (Dispur)               | Himanta Biswa Sarma     |
+| S2_A03 | sec-C   | 300 sq ft  |    70 | Bihar (Patna)                | Nitish Kumar            |
+| S3_A04 | sec-D   | 280 sq ft  |   100 | Chhattishgarh (Raipur)       | Bhupesh Baghel          |
+| S3_A05 | sec-D   | 400 sq ft  |   150 | Goa (Panaji)                 | Pramod Sawant           |
+| S4_A01 | sec-D   | 430 sq ft  |   350 | Gujarat (Gandhinagar)        | Bhupendrabhai Patel     |
+| S4_A02 | sec-C   | 400 sq ft  |   450 | Haryana (Chandigarh)         | Manohar Lal Khattar     |
+| S4_A03 | sec-C   | 450 sq ft  |   390 | Himachal Pradesh (Shimla)    | Jai Ram Thakur          |
+| S5_A0  | sec-A   | 500 sq ft  |   480 | Jammu & Kashmir (Srinagar)   | Vacant                  |
+| S5_A01 | sec-B   | 550 sq ft  |   280 | Jharkhand ( Ranchi)          | Hemant Soren            |
+| S5_A03 | sec-B   | 400 sq ft  |    90 | Maharashtra (Mumbai)         | Uddhav Thackeray        |
+| S6_A0  | sec-A   | 800 sq ft  |   260 | Kerala ( Thiruvananthapuram) | Pinarayi Vijayan        |
+| S6_A01 | sec-A   | 1000 sq ft |   270 | Madhya Pradesh (Bhopal)      | Shivraj Singh Chouhan   |
+| S6_A02 | sec-A   | 1050 sq ft |   280 | Nagaland (Kohima0            | Neiphiu Rio             |
+| S6_A03 | sec-B   | 480 sq ft  |    70 | Odisha (Bhubaneswar)         | Naveen Patnaik          |
+| S6_A04 | sec-B   | 1100 sq ft |   240 | Punjab ( Chandigarh)         | Bhagwant Mann           |
+| S6_A05 | sec-B   | 1200 sq ft |   510 | Tamil Nadu (Chennai)         | M. K. Stalin            |
+| S7_A01 | sec-A   | 1400 sq ft |   520 | Uttar Pradesh (Lucknow)      | Yogi Adityanath         |
+| S7_A02 | sec-A   | 1600 sq ft |   530 | Uttarakhand (Dehradun)       | Pushkar Singh Dhami     |
+| S7_A03 | sec-A   | 1800 sq ft |   540 | West Bengal ( Kolkata)       | Mamata Banerjee         |
+| S7_A04 | sec-A   | 1700 sq ft |   550 | Tripura ( Agartala)          | Manik Saha              |
+| S8_A01 | sec-A   | 1800 sq ft |   560 | Sikkim (Gangtok)             | Prem Singh Tamang       |
++--------+---------+------------+-------+------------------------------+-------------------------+
+23 rows in set (0.00 sec)
+
+mysql> select * from product;
++------------+---------+-----------+---------------------+-----------+-----------+------------------+---------+
+| pid        | barcode | proname   | description         | invoiceNo | serial_no | manufacture_date | sid     |
++------------+---------+-----------+---------------------+-----------+-----------+------------------+---------+
+| pro-x00024 | Hx6661  | Laptop    | Windos 11           | 0002694   |     99991 | 2021-01-24       | S000701 |
+| pro-x00025 | Hx6662  | Camera    | Canon Eos           | 0002695   |     99992 | 2021-02-25       | S000702 |
+| pro-x00026 | Hx6663  | Mobile    | Samsung Galaxy      | 0002696   |     99993 | 2021-03-26       | S000703 |
+| pro-x00027 | Hx6664  | Keybord   | Durable Usage       | 0002697   |     99994 | 27-04-2021       | S000704 |
+| pro-x00028 | Hx6665  | Watches   | Analog Black Dial   | 0002698   |     99995 | 2021-05-28       | S000705 |
+| pro-x00029 | Hx6666  | Headphone | Boat Rockerz        | 0002699   |     99996 | 2021-06-29       | S000705 |
+| pro-x00030 | Hx6667  | i12 TWS B | Earphones Built Mic | 0002700   |     99997 | 2021-07-29       | S000706 |
+| pro-x00031 | Hx6668  | Proffisy  | Stand Portable      | 0002701   |     99998 | 2021-08-29       | S000707 |
+| pro-x00032 | Hx6669  | LED       | Sony Bravia         | 0002702   |     99999 | 2021-09-29       | S000708 |
+| pro-x00033 | Hx6670  | Speaker   | SonySAD40           | 0002703   |     99919 | 2021-10-29       | S000709 |
++------------+---------+-----------+---------------------+-----------+-----------+------------------+---------+
+10 rows in set (0.00 sec)
+
+mysql>
