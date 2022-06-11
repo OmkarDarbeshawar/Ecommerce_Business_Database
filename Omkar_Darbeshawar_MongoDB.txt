@@ -1,0 +1,744 @@
+Name    : Omkar Darbeshawar
+contact : omkardarbeshawar@gmail.com
+sub : mongo DB Commands
+ 
+***********************************************************
+
+PS C:\Users\ASUS> mongo
+MongoDB shell version v5.0.9
+connecting to: mongodb://127.0.0.1:27017/?compressors=disabled&gssapiServiceName=mongodb
+Implicit session: session { "id" : UUID("379f45cb-86ca-449f-be92-6e64c26da1c5") }
+MongoDB server version: 5.0.9
+================
+Warning: the "mongo" shell has been superseded by "mongosh",
+which delivers improved usability and compatibility.The "mongo" shell has been deprecated and will be removed in
+an upcoming release.
+For installation instructions, see
+https://docs.mongodb.com/mongodb-shell/install/
+================
+---
+The server generated these startup warnings when booting:
+        2022-06-09T23:58:34.850+05:30: Access control is not enabled for the database. Read and write access to data and configuration is unrestricted
+---
+---
+        Enable MongoDB's free cloud-based monitoring service, which will then receive and display
+        metrics about your deployment (disk utilization, CPU, operation statistics, etc).
+
+        The monitoring data will be available on a MongoDB website with a unique URL accessible to you
+        and anyone you share the URL with. MongoDB may use this information to make product
+        improvements and to suggest MongoDB products and deployment options to you.
+
+        To enable free monitoring, run the following command: db.enableFreeMonitoring()
+        To permanently disable this reminder, run the following command: db.disableFreeMonitoring()
+---
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> use comments
+switched to db comments
+> db
+comments
+> db
+comments
+> db.dropdatabase()
+uncaught exception: TypeError: db.dropdatabase is not a function :
+@(shell):1:1
+> db.dropDatabase()
+{ "ok" : 1 }
+> db
+comments
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> use simo
+switched to db simo
+> db.dropDatabase()
+{ "ok" : 1 }
+> show database
+uncaught exception: Error: don't know how to show [database] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> db
+simo
+> show dbs
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> use CWH
+switched to db CWH
+> db
+CWH
+> show collections
+> show collections
+> db.createCollection('comments')
+{ "ok" : 1 }
+> show collections
+comments
+> db.createCollection('content')
+{ "ok" : 1 }
+> db.content.drop()
+true
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> show collections
+comments
+> db.comments.insert({
+... 'name': 'Simo',
+... 'lang': 'Java',
+... 'member_since': 5
+... })
+WriteResult({ "nInserted" : 1 })
+>
+> db
+CWH
+> db.comments.insertMany([{
+...  'name': 'Simo',
+...  'lang': 'Java',
+...  'member_since': 5
+... },
+... {'name': 'Panther',
+...  'lang': 'Python',
+...  'member_since': 3
+... },
+... {'name': 'Wolf',
+...  'lang': 'C++',
+...  'member_since': 4
+... }])
+{
+        "acknowledged" : true,
+        "insertedIds" : [
+                ObjectId("62a2bef44babfd633a653b46"),
+                ObjectId("62a2bef44babfd633a653b47"),
+                ObjectId("62a2bef44babfd633a653b48")
+        ]
+}
+> db.comments.find()
+{ "_id" : ObjectId("62a2bd374babfd633a653b45"), "name" : "Simo", "lang" : "Java", "member_since" : 5 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b46"), "name" : "Simo", "lang" : "Java", "member_since" : 5 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b47"), "name" : "Panther", "lang" : "Python", "member_since" : 3 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b48"), "name" : "Wolf", "lang" : "C++", "member_since" : 4 }
+> db.comments.find().pretty()
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b48"),
+        "name" : "Wolf",
+        "lang" : "C++",
+        "member_since" : 4
+}
+> db.comments.find().pretty().limit(2)
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+> db.comments.find({lang:'Python'})
+{ "_id" : ObjectId("62a2bef44babfd633a653b47"), "name" : "Panther", "lang" : "Python", "member_since" : 3 }
+> db.comments.find().limit(2)
+{ "_id" : ObjectId("62a2bd374babfd633a653b45"), "name" : "Simo", "lang" : "Java", "member_since" : 5 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b46"), "name" : "Simo", "lang" : "Java", "member_since" : 5 }
+> db.CWH.delete().limit(2)
+uncaught exception: TypeError: db.CWH.delete is not a function :
+@(shell):1:1
+> db
+CWH
+> shwo collection
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:5
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> db
+CWH
+> db.CWH()
+uncaught exception: TypeError: db.CWH is not a function :
+@(shell):1:1
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> shwo database
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:5
+> show databases
+CWH     0.000GB
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> use CWH
+switched to db CWH
+> db
+CWH
+> show databases
+CWH     0.000GB
+admin   0.000GB
+config  0.000GB
+local   0.000GB
+> db
+CWH
+> use dellms
+switched to db dellms
+> db
+dellms
+> db.createCollection('author')
+{ "ok" : 1 }
+> show databases;
+CWH     0.000GB
+admin   0.000GB
+config  0.000GB
+dellms  0.000GB
+local   0.000GB
+> db.author.fing()
+uncaught exception: TypeError: db.author.fing is not a function :
+@(shell):1:1
+> db.author.find()
+> db.author.insert({name:'Chetan Bhagat'})
+WriteResult({ "nInserted" : 1 })
+> db.author.find()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+> db.author.insert({name:'Mukul Deva'},{Age:57})
+WriteResult({ "nInserted" : 1 })
+> db.author.find()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+> db.author.insert([{name:'Paulo Cohelo'},{Age:59}])
+BulkWriteResult({
+        "writeErrors" : [ ],
+        "writeConcernErrors" : [ ],
+        "nInserted" : 2,
+        "nUpserted" : 0,
+        "nMatched" : 0,
+        "nModified" : 0,
+        "nRemoved" : 0,
+        "upserted" : [ ]
+})
+> db.author.find()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c"), "Age" : 59 }
+> db.author.insert({name:'Robin Sharma',nationality:'Canada',sex:'gender'})
+WriteResult({ "nInserted" : 1 })
+> db.author.find()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c"), "Age" : 59 }
+{ "_id" : ObjectId("62a3786b4babfd633a653b4d"), "name" : "Robin Sharma", "nationality" : "Canada", "sex" : "gender" }
+> db.author.find().pretty()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c"), "Age" : 59 }
+{
+        "_id" : ObjectId("62a3786b4babfd633a653b4d"),
+        "name" : "Robin Sharma",
+        "nationality" : "Canada",
+        "sex" : "gender"
+}
+> db.author.insert({name:'Anirban Dasgupta',nationality:'India',sex:'male'})
+WriteResult({ "nInserted" : 1 })
+> db.author.insert({name:'Romila Thaper',nationality:'India',sex:'female'})
+WriteResult({ "nInserted" : 1 })
+> db.author.find()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c"), "Age" : 59 }
+{ "_id" : ObjectId("62a3786b4babfd633a653b4d"), "name" : "Robin Sharma", "nationality" : "Canada", "sex" : "gender" }
+{ "_id" : ObjectId("62a378cc4babfd633a653b4e"), "name" : "Anirban Dasgupta", "nationality" : "India", "sex" : "male" }
+{ "_id" : ObjectId("62a378f14babfd633a653b4f"), "name" : "Romila Thaper", "nationality" : "India", "sex" : "female" }
+> db.author.find().pretty()
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c"), "Age" : 59 }
+{
+        "_id" : ObjectId("62a3786b4babfd633a653b4d"),
+        "name" : "Robin Sharma",
+        "nationality" : "Canada",
+        "sex" : "gender"
+}
+{
+        "_id" : ObjectId("62a378cc4babfd633a653b4e"),
+        "name" : "Anirban Dasgupta",
+        "nationality" : "India",
+        "sex" : "male"
+}
+{
+        "_id" : ObjectId("62a378f14babfd633a653b4f"),
+        "name" : "Romila Thaper",
+        "nationality" : "India",
+        "sex" : "female"
+}
+> db.author.find({},{name:1})
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c") }
+{ "_id" : ObjectId("62a3786b4babfd633a653b4d"), "name" : "Robin Sharma" }
+{ "_id" : ObjectId("62a378cc4babfd633a653b4e"), "name" : "Anirban Dasgupta" }
+{ "_id" : ObjectId("62a378f14babfd633a653b4f"), "name" : "Romila Thaper" }
+> db.author.find({},{name:1,nationality:1})
+{ "_id" : ObjectId("62a3776f4babfd633a653b49"), "name" : "Chetan Bhagat" }
+{ "_id" : ObjectId("62a377c04babfd633a653b4a"), "name" : "Mukul Deva" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4b"), "name" : "Paulo Cohelo" }
+{ "_id" : ObjectId("62a3780b4babfd633a653b4c") }
+{ "_id" : ObjectId("62a3786b4babfd633a653b4d"), "name" : "Robin Sharma", "nationality" : "Canada" }
+{ "_id" : ObjectId("62a378cc4babfd633a653b4e"), "name" : "Anirban Dasgupta", "nationality" : "India" }
+{ "_id" : ObjectId("62a378f14babfd633a653b4f"), "name" : "Romila Thaper", "nationality" : "India" }
+> db.author.find({},{_id:0,name:1,nationality:1})
+{ "name" : "Chetan Bhagat" }
+{ "name" : "Mukul Deva" }
+{ "name" : "Paulo Cohelo" }
+{  }
+{ "name" : "Robin Sharma", "nationality" : "Canada" }
+{ "name" : "Anirban Dasgupta", "nationality" : "India" }
+{ "name" : "Romila Thaper", "nationality" : "India" }
+>
+> use northwind
+switched to db northwind
+> show collections
+> use lms
+switched to db lms
+> show collection
+uncaught exception: Error: don't know how to show [collection] :
+shellHelper.show@src/mongo/shell/utils.js:1211:11
+shellHelper@src/mongo/shell/utils.js:838:15
+@(shellhelp2):1:1
+> show collections
+> db.comments.find().pretty()
+> shwo databases;
+uncaught exception: SyntaxError: unexpected token: identifier :
+@(shell):1:5
+> show databases
+CWH     0.000GB
+admin   0.000GB
+config  0.000GB
+dellms  0.000GB
+local   0.000GB
+> use CWH
+switched to db CWH
+> show collections
+comments
+> show collections
+comments
+> db.comments.find()
+{ "_id" : ObjectId("62a2bd374babfd633a653b45"), "name" : "Simo", "lang" : "Java", "member_since" : 5 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b46"), "name" : "Simo", "lang" : "Java", "member_since" : 5 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b47"), "name" : "Panther", "lang" : "Python", "member_since" : 3 }
+{ "_id" : ObjectId("62a2bef44babfd633a653b48"), "name" : "Wolf", "lang" : "C++", "member_since" : 4 }
+> db.comments.find().pretty()
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b48"),
+        "name" : "Wolf",
+        "lang" : "C++",
+        "member_since" : 4
+}
+> db.comments.insert({'name':'Harry', 'lang': 'javascript', 'member_since': 5, 'date': new Date()})
+WriteResult({ "nInserted" : 1 })
+> db.comments.find().pretty()
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b48"),
+        "name" : "Wolf",
+        "lang" : "C++",
+        "member_since" : 4
+}
+{
+        "_id" : ObjectId("62a388664babfd633a653b50"),
+        "name" : "Harry",
+        "lang" : "javascript",
+        "member_since" : 5,
+        "date" : ISODate("2022-06-10T18:07:34.205Z")
+}
+> db.comments.find({lang:'Python'})
+{ "_id" : ObjectId("62a2bef44babfd633a653b47"), "name" : "Panther", "lang" : "Python", "member_since" : 3 }
+> db.comments.find().pretty().limit(2)
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+> db.comments.find().pretty().limit(5)
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b48"),
+        "name" : "Wolf",
+        "lang" : "C++",
+        "member_since" : 4
+}
+{
+        "_id" : ObjectId("62a388664babfd633a653b50"),
+        "name" : "Harry",
+        "lang" : "javascript",
+        "member_since" : 5,
+        "date" : ISODate("2022-06-10T18:07:34.205Z")
+}
+> db.comments.find().pretty().limit(3)
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+> db.comments.find().pretty().limit(2).count()
+5
+> db.comments.find({name: 'Rohan'}).count()
+0
+> db.comments.find().sort({member_since:1}).pretty()
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b48"),
+        "name" : "Wolf",
+        "lang" : "C++",
+        "member_since" : 4
+}
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a388664babfd633a653b50"),
+        "name" : "Harry",
+        "lang" : "javascript",
+        "member_since" : 5,
+        "date" : ISODate("2022-06-10T18:07:34.205Z")
+}
+> db.comments.find().sort({member_since:-1}).pretty()
+{
+        "_id" : ObjectId("62a2bd374babfd633a653b45"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b46"),
+        "name" : "Simo",
+        "lang" : "Java",
+        "member_since" : 5
+}
+{
+        "_id" : ObjectId("62a388664babfd633a653b50"),
+        "name" : "Harry",
+        "lang" : "javascript",
+        "member_since" : 5,
+        "date" : ISODate("2022-06-10T18:07:34.205Z")
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b48"),
+        "name" : "Wolf",
+        "lang" : "C++",
+        "member_since" : 4
+}
+{
+        "_id" : ObjectId("62a2bef44babfd633a653b47"),
+        "name" : "Panther",
+        "lang" : "Python",
+        "member_since" : 3
+}
+>
+
+Language used by MongoDB for querying - JSON - Java Script Object Notation
+
+1) To see databses
+> show databases
+
+2) To use database
+use <Database Name>-> Even if database not created, it will create the database, and directly use it
+
+Note: Till the time, atleast one collection is not createed in that database, it won't show in the list of databases when you use 'show databases' command
+
+3) To drop database
+use <database_name>
+db.dropDatabase()
+
+4)To create collection
+->db.createCollection("author")
+
+db.author.insert({key:value})
+
+5)-> db.author.insert({name:"Chetan Bhagat"})
+In above case, a collection with 'author' will be created and a document will be inserted in it (even if collection author is not created previously)
+
+6)To see collections
+-> show collections
+
+7) To drop collection
+-> db.author.drop()
+
+8)To insert the records in collection
+
+db.author.insert({eName:'Amit'}) <-- Will insert One Key Value Pair
+
+db.author.insert({Dept:'Accounts'},{Location:'Bangalore'}) <-- Will insert first keyValue pair, ignore second one
+
+db.author.insert([{Dept:'Accounts'},{Location:'Bangalore'}]) <- Will insert two documents by one command
+
+9)To list the documents in collection 
+
+--> db.author.find()
+--> db.author.find().pretty()
+
+9A) To list few documents
+
+-->db.Employees.find({},{'Sex':1,'Location':1}) ==> Will show only sex and location keys with values (and alongwith default ObjectId)
+-->db.Employees.find({},{_id:0,'Sex':1,'Location':1}) ==> Will show only sex and location keys
+
+10) To list the documents in collection based on single (something similar to where) condition
+
+Use Northwind
+
+-->db.customers.find({Country:'Mexico'}).pretty()
+-->db.customers.find({ContactTitle:'Sales Agent'}).pretty()
+-->db.customers.find({Region:{$ne:null}}).pretty() <--not equal to null
+
+10A) To list the documents in collection based on single condition and with selected key-value pair
+
+db.customers.find({Country:'USA'},{_id:0,Country:1,Region:1},).pretty()
+db.suppliers.find({Country:'USA'},{_id:0,SupplierID:1,Country:1}).pretty()
+
+11) Use of AND condition
+-->db.customers.find({Country:'UK',City:'London'}).pretty()
+-->db.suppliers.find({Country:'USA',City:'Boston'}).pretty()
+--> db.customers.find({Country:'USA',City:'San Francisco'}).pretty()
+
+12) Use of or condition
+
+-->db.customers.find({$or:[{Region:'Barcelona'},{Region:'Madrid'}]}).pretty()
+-->db.customers.find({$or:[{Country:'USA'},{Country:'UK'}]}).pretty()
+
+13) Use of > , < , = >= , <=
+
+db.Employees.find({Salary:{$gt:25000}}).pretty()
+db.products.find({UnitPrice:{$gt:10}}).pretty()
+db.products.find({UnitsInStock:{$gte:100}}).pretty()
+
+14) Sorting the result
+
+db.shippers.find().sort({ShipperID:-1}).pretty()
+Will sort the collection on the basis of ShipperID in DESC order
+
+db.products.find({},{_id:0,UnitPrice:1}).sort({UnitPrice:-1})
+
+1--> ASC
+-1 --> DESC
+
+I will assume that you are working inside a collection named 'comments' on a MongoDB database of your choice
+
+1. Database Commands
+View all databases
+show dbs
+
+ 
+Create a new or switch databases 
+use dbName
+View current Database
+db
+Delete Database 
+db.dropDatabase()
+
+
+2. Collection Commands
+Show Collections
+show collections
+Create a collection named 'comments'
+db.createCollection('comments')
+Drop a collection named 'comments'
+db.comments.drop()
+3. Row(Document) Commands
+Show all Rows in a Collection 
+db.comments.find()
+Show all Rows in a Collection (Prettified)
+db.comments.find().pretty()
+Find the first row matching the object
+db.comments.findOne({name: 'omkar'})
+
+ 
+Insert One Row
+db.comments.insert({
+    'name': 'Simo',
+    'lang': 'JavaScript',
+    'member_since': 5
+ })
+Insert many Rows
+db.comments.insertMany([{
+    'name': 'omkar',
+    'lang': 'JavaScript',
+    'member_since': 5
+    }, 
+    {'name': 'Rohan',
+    'lang': 'Python',
+    'member_since': 3
+    },
+    {'name': 'Lovish',
+    'lang': 'Java',
+    'member_since': 4
+}])
+
+Search in a MongoDb Database
+db.comments.find({lang:'Python'})
+Limit the number of rows in output
+db.comments.find().limit(2)
+Count the number of rows in the output
+db.comments.find().count()
+
+ 
+Update a row
+db.comments.update({name: 'Shubham'},
+{'name': 'omkar',
+    'lang': 'JavaScript',
+    'member_since': 51
+}, {upsert: true})
+Mongodb Increment Operator
+db.comments.update({name: 'Rohan'},
+{$inc:{
+    member_since: 2
+}})
+Mongodb Rename Operator
+db.comments.update({name: 'Rohan'},
+{$rename:{
+    member_since: 'member'
+}})
+Delete Row 
+db.comments.remove({name: 'omkar'})
+Less than/Greater than/ Less than or Eq/Greater than or Eq
+db.comments.find({member_since: {$lt: 90}})
+db.comments.find({member_since: {$lte: 90}})
+db.comments.find({member_since: {$gt: 90}})
+db.comments.find({member_since: {$gte: 90}})
+
+
+The learning journey with SQL and NoSQL using MySQL and MongoDB resp. is very awesome 
+while study its make me happy ... 
+i am sure ..  mine confortable with all time .... 
+THANK YOU so much sir.....!   :) 
+
+
+
