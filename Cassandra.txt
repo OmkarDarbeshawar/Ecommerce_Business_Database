@@ -1,0 +1,768 @@
+Microsoft Windows [Version 10.0.22000.675]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASUS>cqlsh
+
+WARNING: console codepage must be set to cp65001 to support utf-8 encoding on Windows platforms.
+If you experience encoding problems, change your console codepage with 'chcp 65001' before starting cqlsh.
+
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.11.13 | CQL spec 3.4.4 | Native protocol v4]
+Use HELP for help.
+cqlsh> desc keyspaces;
+
+system_schema  system              dellms         bank
+system_auth    system_distributed  system_traces
+
+cqlsh> use dellms
+   ... ;
+cqlsh:dellms> show tables;
+Improper show command.
+cqlsh:dellms> desc tables;
+
+<empty>
+
+cqlsh:dellms> desc table;
+Improper desc command.
+cqlsh:dellms> desc tables
+
+<empty>
+
+cqlsh:dellms> drop keyspace dellms;
+OperationTimedOut: errors={'127.0.0.1': 'Client request timeout. See Session.execute[_async](timeout)'}, last_host=127.0.0.1
+cqlsh:dellms>
+cqlsh:dellms> drop keyspace dellms;
+ConfigurationException: Cannot drop non existing keyspace 'dellms'.
+cqlsh:dellms> select * from dellms.keyspaces;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Keyspace dellms does not exist"
+cqlsh:dellms> desc keyspaces;
+
+system_schema  system_auth  system  system_distributed  system_traces  bank
+
+cqlsh:dellms> create keyspace dellms with replication = {'class':'SimpleStrategy', 'replication_factor':1};
+cqlsh:dellms> select * from system_schema.keyspaces;
+
+ keyspace_name      | durable_writes | replication
+--------------------+----------------+-------------------------------------------------------------------------------------
+        system_auth |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+      system_schema |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+               bank |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+ system_distributed |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '3'}
+             system |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+             dellms |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+      system_traces |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '2'}
+
+(7 rows)
+cqlsh:dellms> create table book(bookid, bookname text , cost int , pages int);
+SyntaxException: line 1:24 no viable alternative at input ',' (create table book(bookid[,]...)
+cqlsh:dellms> create table book(bookid text primary key, bookname text, cost int , pages int);
+cqlsh:dellms> desc book;
+
+CREATE TABLE dellms.book (
+    bookid text PRIMARY KEY,
+    bookname text,
+    cost int,
+    pages int
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B001','Megaliving',300, 400);
+cqlsh:dellms> select * from book;
+
+ bookid | bookname   | cost | pages
+--------+------------+------+-------
+   B001 | Megaliving |  300 |   400
+
+(1 rows)
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) value('B002','Rich dad poor dad', 350, 470);
+SyntaxException: line 1:48 mismatched input 'value' expecting K_VALUES (... bookname, cost, pages) [value]...)
+cqlsh:dellms> select * from book;
+
+ bookid | bookname   | cost | pages
+--------+------------+------+-------
+   B001 | Megaliving |  300 |   400
+
+(1 rows)
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B002','Rich dad poor dad', 350, 470);
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> select * from book where bookid = 'B002';
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+
+(1 rows)
+cqlsh:dellms> select 'B002' from book;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot infer type for term 'B002' in selection clause (try using a cast to force a type)"
+cqlsh:dellms> select B002 from book;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Undefined column name b002"
+cqlsh:dellms> select bookid from book;
+
+ bookid
+--------
+   B002
+   B001
+
+(2 rows)
+cqlsh:dellms> select * from book where bookid = 'B002';
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+
+(1 rows)
+cqlsh:dellms> alter table book add booktype text;
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | booktype | cost | pages
+--------+-------------------+----------+------+-------
+   B002 | Rich dad poor dad |     null |  350 |   470
+   B001 |        Megaliving |     null |  300 |   400
+
+(2 rows)
+cqlsh:dellms> alter table book drop booktype;
+cqlsh:dellms> select * from book
+          ... ;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> drop table book;
+cqlsh:dellms> desc tables;
+
+<empty>
+
+cqlsh:dellms> create table book(bookid text primary key, bookname text, cost int , pages int);
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) value('B002','Rich dad poor dad', 350, 470);
+SyntaxException: line 1:48 mismatched input 'value' expecting K_VALUES (... bookname, cost, pages) [value]...)
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B002','Rich dad poor dad', 350, 470);
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B001','Megaliving', 300, 400);
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> Begin Batch
+          ... insert into book(bookid, bookname, cost, pages) values('B001','Megaliving', 300, 400);
+          ... insert into book(bookid, bookname, cost, pages) values('B002','Rich dad poor dad', 350, 470);update book set bookname = 'One Night In Call Center' where bookid = "B002';
+          ... apply batch;
+          ...
+          ... ;
+          ...
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> Begin Batch
+          ... insert into book(bookid, bookname, cost, pages) values('B001','Megaliving', 300, 400);
+          ... insert into book(bookid, bookname, cost, pages) values('B002','On The Wings Of Eagle', 350, 500);
+          ... update book set bookname = 'One Night In Call Center' where bookid = 'B002';
+          ... Delete bookname from book where bookid = 'B001';
+          ... Apply Batch;
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B001 |                     null |  300 |   400
+
+(2 rows)
+cqlsh:dellms> update book set bookname = 'Megaliving' where bookid = 'B001';
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B001 |               Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> Begin Batch
+          ... insert into book(bookid, bookname, cost, pages) values('B003','On The Wings Of Eagle', 333, 299);
+          ... insert into book(bookid, bookname, cost, pages) values('B004','Midnight Children', 499, 999);
+          ... update book set bookname = 'Monk who sold his Ferari' where bookid = 'B001';
+          ... Apply Batch;
+cqlsh:dellms>
+cqlsh:dellms> select * form book;
+SyntaxException: line 1:9 mismatched input 'form' expecting K_FROM (select * [form]...)
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B004 |        Midnight Children |  499 |   999
+   B003 |    On The Wings Of Eagle |  333 |   299
+   B001 | Monk who sold his Ferari |  300 |   400
+
+(4 rows)
+cqlsh:dellms> create table author (id int primary key, authorname text, country text, bookwritten LIST<text>);
+cqlsh:dellms> insert into author(id, authorname, country, bookwritten) values(1, 'Cheten Bhagat','India',['3 mistakes of my life','One Indian girl']);
+cqlsh:dellms> select * from author;
+
+ id | authorname    | bookwritten                                  | country
+----+---------------+----------------------------------------------+---------
+  1 | Cheten Bhagat | ['3 mistakes of my life', 'One Indian girl'] |   India
+
+(1 rows)
+cqlsh:dellms> insert into author(id, authorname, country, bookwritten) values(2,'Mukul Deva','India',['The Cobra','Alchemist','Peace Keepers']);
+cqlsh:dellms> select * from author;
+
+ id | authorname    | bookwritten                                  | country
+----+---------------+----------------------------------------------+---------
+  1 | Cheten Bhagat | ['3 mistakes of my life', 'One Indian girl'] |   India
+  2 |    Mukul Deva |  ['The Cobra', 'Alchemist', 'Peace Keepers'] |   India
+
+(2 rows)
+cqlsh:dellms>
+Microsoft Windows [Version 10.0.22000.675]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASUS>cqlsh
+
+WARNING: console codepage must be set to cp65001 to support utf-8 encoding on Windows platforms.
+If you experience encoding problems, change your console codepage with 'chcp 65001' before starting cqlsh.
+
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.11.13 | CQL spec 3.4.4 | Native protocol v4]
+Use HELP for help.
+cqlsh> desc keyspaces;
+
+system_schema  system              dellms         bank
+system_auth    system_distributed  system_traces
+
+cqlsh> use dellms;
+cqlsh:dellms> desc tables;
+
+book  author
+
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B004 |        Midnight Children |  499 |   999
+   B003 |    On The Wings Of Eagle |  333 |   299
+   B001 | Monk who sold his Ferari |  300 |   400
+
+(4 rows)
+cqlsh:dellms> desc book;
+
+CREATE TABLE dellms.book (
+    bookid text PRIMARY KEY,
+    bookname text,
+    cost int,
+    pages int
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:dellms> select * from author;
+
+ id | authorname    | bookwritten                                  | country
+----+---------------+----------------------------------------------+---------
+  1 | Cheten Bhagat | ['3 mistakes of my life', 'One Indian girl'] |   India
+  2 |    Mukul Deva |  ['The Cobra', 'Alchemist', 'Peace Keepers'] |   India
+
+(2 rows)
+cqlsh:dellms> desc author;
+
+CREATE TABLE dellms.author (
+    id int PRIMARY KEY,
+    authorname text,
+    bookwritten list<text>,
+    country text
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:dellms>
+Microsoft Windows [Version 10.0.22000.675]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASUS>cqlsh
+
+WARNING: console codepage must be set to cp65001 to support utf-8 encoding on Windows platforms.
+If you experience encoding problems, change your console codepage with 'chcp 65001' before starting cqlsh.
+
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.11.13 | CQL spec 3.4.4 | Native protocol v4]
+Use HELP for help.
+cqlsh> desc keyspaces;
+
+system_schema  system              dellms         bank
+system_auth    system_distributed  system_traces
+
+cqlsh> use dellms
+   ... ;
+cqlsh:dellms> show tables;
+Improper show command.
+cqlsh:dellms> desc tables;
+
+<empty>
+
+cqlsh:dellms> desc table;
+Improper desc command.
+cqlsh:dellms> desc tables
+
+<empty>
+
+cqlsh:dellms> drop keyspace dellms;
+OperationTimedOut: errors={'127.0.0.1': 'Client request timeout. See Session.execute[_async](timeout)'}, last_host=127.0.0.1
+cqlsh:dellms>
+cqlsh:dellms> drop keyspace dellms;
+ConfigurationException: Cannot drop non existing keyspace 'dellms'.
+cqlsh:dellms> select * from dellms.keyspaces;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Keyspace dellms does not exist"
+cqlsh:dellms> desc keyspaces;
+
+system_schema  system_auth  system  system_distributed  system_traces  bank
+
+cqlsh:dellms> create keyspace dellms with replication = {'class':'SimpleStrategy', 'replication_factor':1};
+cqlsh:dellms> select * from system_schema.keyspaces;
+
+ keyspace_name      | durable_writes | replication
+--------------------+----------------+-------------------------------------------------------------------------------------
+        system_auth |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+      system_schema |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+               bank |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+ system_distributed |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '3'}
+             system |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+             dellms |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+      system_traces |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '2'}
+
+(7 rows)
+cqlsh:dellms> create table book(bookid, bookname text , cost int , pages int);
+SyntaxException: line 1:24 no viable alternative at input ',' (create table book(bookid[,]...)
+cqlsh:dellms> create table book(bookid text primary key, bookname text, cost int , pages int);
+cqlsh:dellms> desc book;
+
+CREATE TABLE dellms.book (
+    bookid text PRIMARY KEY,
+    bookname text,
+    cost int,
+    pages int
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B001','Megaliving',300, 400);
+cqlsh:dellms> select * from book;
+
+ bookid | bookname   | cost | pages
+--------+------------+------+-------
+   B001 | Megaliving |  300 |   400
+
+(1 rows)
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) value('B002','Rich dad poor dad', 350, 470);
+SyntaxException: line 1:48 mismatched input 'value' expecting K_VALUES (... bookname, cost, pages) [value]...)
+cqlsh:dellms> select * from book;
+
+ bookid | bookname   | cost | pages
+--------+------------+------+-------
+   B001 | Megaliving |  300 |   400
+
+(1 rows)
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B002','Rich dad poor dad', 350, 470);
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> select * from book where bookid = 'B002';
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+
+(1 rows)
+cqlsh:dellms> select 'B002' from book;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Cannot infer type for term 'B002' in selection clause (try using a cast to force a type)"
+cqlsh:dellms> select B002 from book;
+InvalidRequest: Error from server: code=2200 [Invalid query] message="Undefined column name b002"
+cqlsh:dellms> select bookid from book;
+
+ bookid
+--------
+   B002
+   B001
+
+(2 rows)
+cqlsh:dellms> select * from book where bookid = 'B002';
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+
+(1 rows)
+cqlsh:dellms> alter table book add booktype text;
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | booktype | cost | pages
+--------+-------------------+----------+------+-------
+   B002 | Rich dad poor dad |     null |  350 |   470
+   B001 |        Megaliving |     null |  300 |   400
+
+(2 rows)
+cqlsh:dellms> alter table book drop booktype;
+cqlsh:dellms> select * from book
+          ... ;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> drop table book;
+cqlsh:dellms> desc tables;
+
+<empty>
+
+cqlsh:dellms> create table book(bookid text primary key, bookname text, cost int , pages int);
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) value('B002','Rich dad poor dad', 350, 470);
+SyntaxException: line 1:48 mismatched input 'value' expecting K_VALUES (... bookname, cost, pages) [value]...)
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B002','Rich dad poor dad', 350, 470);
+cqlsh:dellms> insert into book(bookid, bookname, cost, pages) values('B001','Megaliving', 300, 400);
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> Begin Batch
+          ... insert into book(bookid, bookname, cost, pages) values('B001','Megaliving', 300, 400);
+          ... insert into book(bookid, bookname, cost, pages) values('B002','Rich dad poor dad', 350, 470);update book set bookname = 'One Night In Call Center' where bookid = "B002';
+          ... apply batch;
+          ...
+          ... ;
+          ...
+cqlsh:dellms> select * from book;
+
+ bookid | bookname          | cost | pages
+--------+-------------------+------+-------
+   B002 | Rich dad poor dad |  350 |   470
+   B001 |        Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> Begin Batch
+          ... insert into book(bookid, bookname, cost, pages) values('B001','Megaliving', 300, 400);
+          ... insert into book(bookid, bookname, cost, pages) values('B002','On The Wings Of Eagle', 350, 500);
+          ... update book set bookname = 'One Night In Call Center' where bookid = 'B002';
+          ... Delete bookname from book where bookid = 'B001';
+          ... Apply Batch;
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B001 |                     null |  300 |   400
+
+(2 rows)
+cqlsh:dellms> update book set bookname = 'Megaliving' where bookid = 'B001';
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B001 |               Megaliving |  300 |   400
+
+(2 rows)
+cqlsh:dellms> Begin Batch
+          ... insert into book(bookid, bookname, cost, pages) values('B003','On The Wings Of Eagle', 333, 299);
+          ... insert into book(bookid, bookname, cost, pages) values('B004','Midnight Children', 499, 999);
+          ... update book set bookname = 'Monk who sold his Ferari' where bookid = 'B001';
+          ... Apply Batch;
+cqlsh:dellms>
+cqlsh:dellms> select * form book;
+SyntaxException: line 1:9 mismatched input 'form' expecting K_FROM (select * [form]...)
+cqlsh:dellms> select * from book;
+
+ bookid | bookname                 | cost | pages
+--------+--------------------------+------+-------
+   B002 | One Night In Call Center |  350 |   500
+   B004 |        Midnight Children |  499 |   999
+   B003 |    On The Wings Of Eagle |  333 |   299
+   B001 | Monk who sold his Ferari |  300 |   400
+
+(4 rows)
+cqlsh:dellms> create table author (id int primary key, authorname text, country text, bookwritten LIST<text>);
+cqlsh:dellms> insert into author(id, authorname, country, bookwritten) values(1, 'Cheten Bhagat','India',['3 mistakes of my life','One Indian girl']);
+cqlsh:dellms> select * from author;
+
+ id | authorname    | bookwritten                                  | country
+----+---------------+----------------------------------------------+---------
+  1 | Cheten Bhagat | ['3 mistakes of my life', 'One Indian girl'] |   India
+
+(1 rows)
+cqlsh:dellms> insert into author(id, authorname, country, bookwritten) values(2,'Mukul Deva','India',['The Cobra','Alchemist','Peace Keepers']);
+cqlsh:dellms> select * from author;
+
+ id | authorname    | bookwritten                                  | country
+----+---------------+----------------------------------------------+---------
+  1 | Cheten Bhagat | ['3 mistakes of my life', 'One Indian girl'] |   India
+  2 |    Mukul Deva |  ['The Cobra', 'Alchemist', 'Peace Keepers'] |   India
+
+(2 rows)
+cqlsh:dellms> desc keyspaces;
+
+system_schema  system              dellms         bank
+system_auth    system_distributed  system_traces
+
+cqlsh:dellms>Microsoft Windows [Version 10.0.22000.675]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASUS>cd e:
+E:\
+
+C:\Users\ASUS>E:\
+'E:\' is not recognized as an internal or external command,
+operable program or batch file.
+
+C:\Users\ASUS>E:
+
+E:\>cd E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra
+
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>dir
+ Volume in drive E is New Volume
+ Volume Serial Number is 2AF0-377A
+
+ Directory of E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra
+
+06/14/2022  12:56 PM    <DIR>          .
+06/13/2022  12:38 PM    <DIR>          ..
+06/13/2022  04:22 PM               436 cas.py
+06/13/2022  04:12 PM               436 cas.py.bak
+06/13/2022  03:28 PM                 0 cas.py.bak.zmdownload
+06/13/2022  12:44 PM             2,371 Cassandra Commands.txt
+06/13/2022  12:44 PM            10,971 Cassandra Datatypes.xlsx
+06/13/2022  05:02 PM            18,252 cassandra-env.ps1
+06/14/2022  12:27 PM            13,635 cas_work.txt
+06/13/2022  08:38 PM             8,037 day01.txt
+06/14/2022  12:57 PM    <DIR>          Project_Cassandra
+06/13/2022  02:43 PM        10,249,768 vcredist_x64(20220613_144343).zip
+06/13/2022  02:43 PM        10,249,768 vcredist_x64.zip
+              10 File(s)     20,553,674 bytes
+               3 Dir(s)  369,964,060,672 bytes free
+
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>dir
+ Volume in drive E is New Volume
+ Volume Serial Number is 2AF0-377A
+
+ Directory of E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra
+
+06/14/2022  01:06 PM    <DIR>          .
+06/13/2022  12:38 PM    <DIR>          ..
+06/13/2022  04:22 PM               436 cas.py
+06/13/2022  04:12 PM               436 cas.py.bak
+06/13/2022  03:28 PM                 0 cas.py.bak.zmdownload
+06/13/2022  12:44 PM             2,371 Cassandra Commands.txt
+06/13/2022  12:44 PM            10,971 Cassandra Datatypes.xlsx
+06/13/2022  05:02 PM            18,252 cassandra-env.ps1
+06/14/2022  12:27 PM            13,635 cas_work.txt
+06/13/2022  08:38 PM             8,037 day01.txt
+06/14/2022  12:57 PM    <DIR>          Project_Cassandra
+06/14/2022  01:06 PM               436 Project_cassandra.py
+06/13/2022  02:43 PM        10,249,768 vcredist_x64(20220613_144343).zip
+06/13/2022  02:43 PM        10,249,768 vcredist_x64.zip
+              11 File(s)     20,554,110 bytes
+               3 Dir(s)  369,964,060,672 bytes free
+
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>python Project_cassandra.py
+Traceback (most recent call last):
+  File "Project_cassandra.py", line 3, in <module>
+    session=clstr.connect('libs')
+  File "C:\Python27\lib\site-packages\cassandra\cluster.py", line 1715, in connect
+    session = self._new_session(keyspace)
+  File "C:\Python27\lib\site-packages\cassandra\cluster.py", line 1772, in _new_session
+    session = Session(self, self.metadata.all_hosts(), keyspace)
+  File "C:\Python27\lib\site-packages\cassandra\cluster.py", line 2553, in __init__
+    raise NoHostAvailable(msg, [h.address for h in hosts])
+cassandra.cluster.NoHostAvailable: ("Unable to connect to any servers using keyspace 'libs'", ['127.0.0.1'])
+
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>dir
+ Volume in drive E is New Volume
+ Volume Serial Number is 2AF0-377A
+
+ Directory of E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra
+
+06/14/2022  01:06 PM    <DIR>          .
+06/13/2022  12:38 PM    <DIR>          ..
+06/13/2022  04:22 PM               436 cas.py
+06/13/2022  04:12 PM               436 cas.py.bak
+06/13/2022  03:28 PM                 0 cas.py.bak.zmdownload
+06/13/2022  12:44 PM             2,371 Cassandra Commands.txt
+06/13/2022  12:44 PM            10,971 Cassandra Datatypes.xlsx
+06/13/2022  05:02 PM            18,252 cassandra-env.ps1
+06/14/2022  12:27 PM            13,635 cas_work.txt
+06/13/2022  08:38 PM             8,037 day01.txt
+06/14/2022  12:57 PM    <DIR>          Project_Cassandra
+06/14/2022  01:06 PM               436 Project_cassandra.py
+06/13/2022  02:43 PM        10,249,768 vcredist_x64(20220613_144343).zip
+06/13/2022  02:43 PM        10,249,768 vcredist_x64.zip
+              11 File(s)     20,554,110 bytes
+               3 Dir(s)  369,964,060,672 bytes free
+
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>python cas.py
+Traceback (most recent call last):
+  File "cas.py", line 6, in <module>
+    session.execute("update book set bookname = 'The Monk Who Sold His Farari' where bookid = 'B003';") 
+  File "C:\Python27\lib\site-packages\cassandra\cluster.py", line 2618, in execute
+    return self.execute_async(query, parameters, trace, custom_payload, timeout, execution_profile, paging_state, host, execute_as).result()
+  File "C:\Python27\lib\site-packages\cassandra\cluster.py", line 4894, in result
+    raise self._final_exception
+cassandra.InvalidRequest: Error from server: code=2200 [Invalid query] message="unconfigured table book"
+Exception in thread asyncore_cassandra_driver_event_loop (most likely raised during interpreter shutdown):
+E:\DBDA_CDAC_ND\DBDA MODULES\Data Collection - DBMS\DBMS_DELHI\Cassandra>
+Microsoft Windows [Version 10.0.22000.675]
+(c) Microsoft Corporation. All rights reserved.
+
+C:\Users\ASUS>cqlsh
+
+WARNING: console codepage must be set to cp65001 to support utf-8 encoding on Windows platforms.
+If you experience encoding problems, change your console codepage with 'chcp 65001' before starting cqlsh.
+
+Connected to Test Cluster at 127.0.0.1:9042.
+[cqlsh 5.0.1 | Cassandra 3.11.13 | CQL spec 3.4.4 | Native protocol v4]
+Use HELP for help.
+cqlsh> create keyspace automobile with replication = ['Class': 'SimpeStrategy','replication_factor':1};
+SyntaxException: line 1:46 no viable alternative at input '[' (create keyspace automobile with [replication] =...)
+cqlsh> desc keyspaces;
+
+system_schema  system              dellms         bank
+system_auth    system_distributed  system_traces
+
+cqlsh> create keyspace automobile with replication = {'Catogery':'SimpleStrategy','replication_factor':1};
+ConfigurationException: Missing mandatory replication strategy class
+cqlsh> create keyspace automobile with replication = {'class': 'SimpleStrategy', 'replication_factor' : 1};
+cqlsh> desc keyspaces;
+
+automobile     system_auth  system_distributed  system_traces
+system_schema  system       dellms              bank
+
+cqlsh> select * from system_schema.keyspaces;
+
+ keyspace_name      | durable_writes | replication
+--------------------+----------------+-------------------------------------------------------------------------------------
+        system_auth |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+      system_schema |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+               bank |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+         automobile |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+ system_distributed |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '3'}
+             system |           True |                             {'class': 'org.apache.cassandra.locator.LocalStrategy'}
+             dellms |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '1'}
+      system_traces |           True | {'class': 'org.apache.cassandra.locator.SimpleStrategy', 'replication_factor': '2'}
+
+(8 rows)
+cqlsh> create table product(Product_id int primary key, product_name text, cost varint);
+InvalidRequest: Error from server: code=2200 [Invalid query] message="No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename"
+cqlsh> create table product( Product_id int primary key, product_name text, cost varint);
+InvalidRequest: Error from server: code=2200 [Invalid query] message="No keyspace has been specified. USE a keyspace, or explicitly specify keyspace.tablename"
+cqlsh> use automobile;
+cqlsh:automobile> create table product( Product_id int primary key, product_name text, cost varint);
+cqlsh:automobile> desc tables;
+
+product
+
+cqlsh:automobile> select * from product;
+
+ product_id | cost | product_name
+------------+------+--------------
+
+(0 rows)
+cqlsh:automobile> insert into product(product_id, cost,product_name) values(1111,230,'Samsung Mobile');
+cqlsh:automobile> select * from product;
+
+ product_id | cost | product_name
+------------+------+----------------
+       1111 |  230 | Samsung Mobile
+
+(1 rows)
+cqlsh:automobile> desc product;
+
+CREATE TABLE automobile.product (
+    product_id int PRIMARY KEY,
+    cost varint,
+    product_name text
+) WITH bloom_filter_fp_chance = 0.01
+    AND caching = {'keys': 'ALL', 'rows_per_partition': 'NONE'}
+    AND comment = ''
+    AND compaction = {'class': 'org.apache.cassandra.db.compaction.SizeTieredCompactionStrategy', 'max_threshold': '32', 'min_threshold': '4'}
+    AND compression = {'chunk_length_in_kb': '64', 'class': 'org.apache.cassandra.io.compress.LZ4Compressor'}
+    AND crc_check_chance = 1.0
+    AND dclocal_read_repair_chance = 0.1
+    AND default_time_to_live = 0
+    AND gc_grace_seconds = 864000
+    AND max_index_interval = 2048
+    AND memtable_flush_period_in_ms = 0
+    AND min_index_interval = 128
+    AND read_repair_chance = 0.0
+    AND speculative_retry = '99PERCENTILE';
+
+cqlsh:automobile>
